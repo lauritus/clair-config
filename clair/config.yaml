@@ -1,0 +1,40 @@
+clair:
+  database:
+    # Database driver
+    type: pgsql
+    options:
+      source: postgresql://postgres:password@postgres:5432?sslmode=disable
+      # Number of elements kept in the cache
+      # Values unlikely to change (e.g. namespaces) are cached in order to save prevent needless roundtrips to the database.
+      cachesize: 16384
+
+  api:
+    # v3 grpc/RESTful API server address
+    addr: "0.0.0.0:6060"
+
+    # Deadline before an API request will respond with a 503
+    timeout: 900s
+
+  worker:
+    namespace_detectors:
+      - os-release
+      - lsb-release
+      - apt-sources
+      - alpine-release
+      - redhat-release
+
+    feature_listers:
+      - apk
+      - dpkg
+      - rpm
+
+  updater:
+    # Frequency the database will be updated with vulnerabilities from the default data sources
+    # The value 0 disables the updater entirely.
+    interval: 2h
+    enabledupdaters: 
+      - debian
+      - ubuntu
+      - rhel
+      - oracle
+      - alpine
